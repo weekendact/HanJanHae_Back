@@ -2,6 +2,8 @@ package com.back.hanjanhae.users.controller;
 
 import com.back.hanjanhae.users.dto.UsersSocialSaveDTO;
 import com.back.hanjanhae.users.service.UsersService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +14,24 @@ public class UsersController {
     private final UsersService usersService;
 
     public UsersController(UsersService usersService) {
+
         this.usersService = usersService;
     }
 
-    @PostMapping("/socialLogin")
-    public ResponseEntity<String> socialLogin(@RequestBody UsersSocialSaveDTO usersSocialSaveDTO) {
-        int result = usersService.socialLogin(usersSocialSaveDTO);
+
+
+    @PostMapping("/socialSignUp")
+    public ResponseEntity<String> socialSignUp(UsersSocialSaveDTO usersSocialSaveDTO, HttpServletRequest request) {
+
+        String userId = (String) request.getAttribute("usersSocialId");
+        String userEmail = (String) request.getAttribute("usersEmail");
+
+        usersSocialSaveDTO.setUsersSocialId(userId);
+        usersSocialSaveDTO.setUsersEmail(userEmail);
+
+        int result = usersService.socialSignUp(usersSocialSaveDTO);
+
+        System.out.println("Controller작동중");
         if (result == 201) {
             return ResponseEntity.status(HttpStatus.CREATED).body("");
         } else {
