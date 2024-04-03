@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Users {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "users_id")
     private Long usersId;
 

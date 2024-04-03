@@ -1,9 +1,10 @@
 package com.back.hanjanhae.users.controller;
 
+import com.back.hanjanhae.users.dto.UsersSaveDetailDTO;
 import com.back.hanjanhae.users.dto.UsersSocialSaveDTO;
 import com.back.hanjanhae.users.service.UsersService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,24 +30,34 @@ public class UsersController {
         usersSocialSaveDTO.setUsersSocialId(userId);
         usersSocialSaveDTO.setUsersEmail(userEmail);
 
-        int result = usersService.socialSignUp(usersSocialSaveDTO);
-
         System.out.println("Controller작동중");
-        if (result == 201) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("");
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body("");
-        }
+
+        return usersService.socialSignUp(usersSocialSaveDTO) ?
+                ResponseEntity.status(HttpStatus.CREATED).body("") :
+                ResponseEntity.status(HttpStatus.OK).body("");
+    }
+
+    @GetMapping("/nicknameDuplicate")
+    public ResponseEntity<?> nicknameDuplicate(@RequestParam String usersNickname) {
+        return usersService.nicknameDuplicate(usersNickname) ?
+                ResponseEntity.status(HttpStatus.CONFLICT).build(): // 닉네임이 있음
+                ResponseEntity.status(HttpStatus.OK).build(); // 닉네임이 없음
+    }
+
+    @PostMapping("/usersSaveDetail")
+    public ResponseEntity<?> usersSaveDetail(UsersSaveDetailDTO usersSaveDetailDTO, HttpServletRequest request) {
+        String usersEmail = (String) request.getAttribute("usersEmail");
+        return usersService.usersSaveDetail(usersSaveDetailDTO, usersEmail) ?
+                ResponseEntity.status(HttpStatus.CREATED).build():
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @DeleteMapping("/deleteUsers")
-    public ResponseEntity<String> deleteUsers(@RequestParam Long usersId) {
-       int result = usersService.deleteUsers(usersId);
-       if (result == 204) {
-           return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
-       } else {
-           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+    public ResponseEntity<String> deleteUsers(HttpServletRequest request) {
+        String usersEmail = (String) request.getAttribute("uesrsEmail");
+       return  usersService.deleteUsers(usersEmail) ?
+             ResponseEntity.status(HttpStatus.NO_CONTENT).body(""):
+             ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
        }
-    }
-
 }
+

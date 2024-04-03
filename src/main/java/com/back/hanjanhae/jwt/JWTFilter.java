@@ -63,7 +63,7 @@ public class JWTFilter extends OncePerRequestFilter {
             String authorization = request.getHeader("Authorization"); //requset에서 Authorization로 된 헤더를 찾음
 
             //Authorization 헤더 검증
-            if (authorization == null|| !authorization.startsWith("Bearer ")) {
+            if (authorization == null || !authorization.startsWith("Bearer ")) {
 
 
                 String token =jwtUtil.createJwt(reqUserId,reqUserEmail,60*60*60*10L); //토큰 생성
@@ -107,10 +107,11 @@ public class JWTFilter extends OncePerRequestFilter {
             Authentication authToken =
                     new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
 
+
             //3. 2번에서 생성한 토큰으로 세션에 사용자 등록
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
-            System.out.println("authToken :"+authToken);
+//            System.out.println("authToken :"+authToken);
 
             request.setAttribute("usersSocialId", usersSocialId);
             request.setAttribute("usersEmail", usersEmail);

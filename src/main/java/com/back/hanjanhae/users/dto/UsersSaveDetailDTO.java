@@ -6,11 +6,11 @@ package com.back.hanjanhae.users.dto;
 
 @Getter
 @Setter
-public class UsersSaveDTO {
+public class UsersSaveDetailDTO {
 
     private String usersNickname;
 
-    private int usersAge;
+    private Integer usersAge;
 
-    private char usersGender;
+    private Character usersGender;
 }

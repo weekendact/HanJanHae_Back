@@ -11,4 +11,14 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     Users findByUsersId(Long usersId);
 
     Users findByUsersSocialIdAndUsersEmail(String usersSocialId, String usersEmail);
+
+    Users findByUsersNickname(String usersNickname);
+
+    Users findByUsersEmail(String usersEmail);
+
+    boolean existsByUsersNickname(String usersNickname);
+
+    boolean existsByUsersEmail(String usersEmail);
+
+    Users deleteByUsersEmail(String usersEmail);
 }
