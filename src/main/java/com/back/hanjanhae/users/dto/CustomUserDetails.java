@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
-    private final UsersSocialSaveDTO users;
+    private final UsersSocialSaveDTO usersSocialSaveDTO;
 
-    public CustomUserDetails(UsersSocialSaveDTO users) {
-        this.users = users;
+    public CustomUserDetails(UsersSocialSaveDTO usersSocialSaveDTO) {
+        this.usersSocialSaveDTO = usersSocialSaveDTO;
     }
 
     @Override
@@ -21,20 +21,22 @@ public class CustomUserDetails implements UserDetails {
             @Override
             public String getAuthority() {
 
-                return users.getUsersSocialId();
+                return usersSocialSaveDTO.getUsersSocialId();
             }
+
         });
         return collection;
     }
+    public String getUsersEmail() { return usersSocialSaveDTO.getUsersEmail(); }
 
     @Override
     public String getPassword() {
-        return users.getUsersEmail();
+        return usersSocialSaveDTO.getUsersEmail();
     }
 
     @Override
     public String getUsername() {
-        return users.getUsersSocialId();
+        return usersSocialSaveDTO.getUsersSocialId();
     }
 
     @Override

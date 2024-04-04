@@ -3,17 +3,23 @@ package com.back.hanjanhae.config;
 import com.back.hanjanhae.jwt.JWTFilter;
 import com.back.hanjanhae.jwt.JWTUtil;
 
+import com.back.hanjanhae.users.service.UsersService;
 import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.authentication.AuthenticationManager;
+
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -22,10 +28,13 @@ import java.util.Collections;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    final private JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil;
 
-    public SecurityConfig(JWTUtil jwtUtil) {
+    private final UsersService usersService;
+
+    public SecurityConfig(JWTUtil jwtUtil, UsersService usersService) {
         this.jwtUtil = jwtUtil;
+        this.usersService = usersService;
     }
 
 
@@ -56,6 +65,7 @@ public class SecurityConfig {
                             }
                         }));
 
+
         System.out.println("SecurityFilterChain 정상작동");
 
         //csrf disable
@@ -67,7 +77,7 @@ public class SecurityConfig {
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/socialSignUp").permitAll()
+                .requestMatchers("/users/socialLogin").permitAll()
                 .anyRequest().authenticated());
 
         //세션 설정
@@ -76,8 +86,15 @@ public class SecurityConfig {
 
 
         http
-                .addFilterAt(new JWTFilter(jwtUtil),  UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(jwtFilter(),  UsernamePasswordAuthenticationFilter.class);
+
+
 
         return http.build();
+    }
+    @Bean
+    public JWTFilter jwtFilter() {
+        // Spring이 자동으로 JWTFilter에 필요한 의존성을 주입
+        return new JWTFilter(jwtUtil, usersService);
     }
 }
