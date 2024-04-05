@@ -77,7 +77,8 @@ public class SecurityConfig {
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/users/socialLogin").permitAll()
+                .requestMatchers("/users/socialSignUp").permitAll()
+                .requestMatchers("/users/socialSignUp").permitAll()
                 .anyRequest().authenticated());
 
         //세션 설정

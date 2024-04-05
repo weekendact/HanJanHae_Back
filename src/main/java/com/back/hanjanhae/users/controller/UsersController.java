@@ -24,12 +24,20 @@ public class UsersController {
         return (Long) request.getAttribute("usersId");
     }
 
-    @PostMapping("/socialLogin")
-    public ResponseEntity<Void> socialLogin(@RequestBody UsersSocialSaveDTO usersSocialSaveDTO, HttpServletRequest request) {
+    @PostMapping("/socialLogIn")
+    public ResponseEntity<Void> socialLogin(HttpServletRequest request) {
+        return usersService.socialLogin(issueUserIdFromToken(request)) ?
+                ResponseEntity.status(HttpStatus.OK).build() :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+
+    @PostMapping("/socialSignUp")
+    public ResponseEntity<Void> socialSignUp(@RequestBody UsersSocialSaveDTO usersSocialSaveDTO, HttpServletRequest request) {
         usersSocialSaveDTO.setUsersSocialId((String) request.getAttribute("usersSocialId"));
         usersSocialSaveDTO.setUsersEmail((String) request.getAttribute("usersEmail"));
 
-        return usersService.socialLogin(usersSocialSaveDTO) ?
+        return usersService.socialSignUp(usersSocialSaveDTO) ?
                 ResponseEntity.status(HttpStatus.CREATED).build() :
                 ResponseEntity.status(HttpStatus.OK).build();
     }

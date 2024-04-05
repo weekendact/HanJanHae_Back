@@ -48,8 +48,6 @@ public class JWTFilter extends OncePerRequestFilter {
                                               FilterChain filterChain) throws ServletException, IOException {
         try {
 
-            // 프론트에서 보내주는 값의 Content-Type
-            String contentType = request.getContentType();
 
             // requset에서 Authorization로 된 헤더를 찾음
             String authorization = request.getHeader("Authorization");
@@ -60,58 +58,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
 
             // Authorization 헤더 검증
-            if (authorization == null || !authorization.startsWith("Bearer ")) {
+            if (authorization != null && authorization.startsWith("Bearer ")) {
 
-                // Content-Type이 application/json 인지 확인
-                if (contentType != null && contentType.startsWith("application/json")) {
-
-                    // JSON 데이터를 읽어옴
-                    StringBuilder stringBuilder = new StringBuilder();
-                    try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            stringBuilder.append(line);
-                        }
-                    }
-
-                    // 읽어온 JSON 데이터 파싱
-                    String json = stringBuilder.toString();
-                    JsonNode rootNode = objectMapper.readTree(json);
-
-                    // usersSocialId와 usersEmail이 있다면
-                    if (rootNode.get("usersSocialId") != null && rootNode.get("usersEmail") != null) {
-                        // usersSocialId와 usersEmail 값을 추출
-                        reqUsersSocialId = rootNode.get("usersSocialId").asText();
-                        reqUsersEmail = rootNode.get("usersEmail").asText();
-
-                        // 회원가입 로직
-                        Users user = usersService.handleSocialLogin(reqUsersSocialId, reqUsersEmail);
-
-                        //토큰 생성
-                        String token = "Bearer " + jwtUtil.createJwt(user.getUsersId(), user.getUsersSocialId(), user.getUsersEmail(), 60 * 60 * 60 * 60 * 60 * 10L);
-
-                        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                        response.setStatus(HttpServletResponse.SC_CREATED);
-
-                        // 조아름 씨를 위한 토큰 확인
-                        System.out.println("token : " + token);
-
-                        // 응답 바디에 JSON 형태로 토큰 값을 포함
-                        Map<String, String> tokenResponse = new HashMap<>();
-                        tokenResponse.put("token", token);
-
-                        // ObjectMapper를 사용해 Map을 JSON 문자열로 변환
-                        String jsonResponse = objectMapper.writeValueAsString(tokenResponse);
-
-                        // 응답 바디에 JSON 문자열 작성
-                        response.getWriter().write(jsonResponse);
-
-                        return;
-                    }
-
-                }
-                // 만약 토큰이 있다면
-            } else {
                 // 로그인 시 토큰이 있으면
                 String token = authorization.substring(7); // bearer 다음 부분 받음
 
@@ -148,6 +96,64 @@ public class JWTFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
 
                 return;
+
+                // 만약 토큰이 있다면
+            } else {
+                // 프론트에서 보내주는 값의 Content-Type
+                String contentType = request.getContentType();
+
+                // Content-Type이 application/json 인지 확인
+                if (contentType != null && contentType.startsWith("application/json")) {
+
+                    // JSON 데이터를 읽어옴
+                    StringBuilder stringBuilder = new StringBuilder();
+                    try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(line);
+                        }
+                    }
+
+                    // 읽어온 JSON 데이터 파싱
+                    String json = stringBuilder.toString();
+                    JsonNode rootNode = objectMapper.readTree(json);
+
+                    // usersSocialId와 usersEmail이 있다면
+                    if (rootNode.get("usersSocialId") != null && rootNode.get("usersEmail") != null) {
+                        // usersSocialId와 usersEmail 값을 추출
+                        reqUsersSocialId = rootNode.get("usersSocialId").asText();
+                        reqUsersEmail = rootNode.get("usersEmail").asText();
+
+                        // 회원가입 로직
+                        Users user = usersService.handleSocialSignUp(reqUsersSocialId, reqUsersEmail);
+
+                        //토큰 생성
+                        String token = "Bearer " + jwtUtil.createJwt(user.getUsersId(), user.getUsersSocialId(), user.getUsersEmail(), 60 * 60 * 60 * 60 * 60 * 10L);
+
+                        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                        response.setStatus(HttpServletResponse.SC_CREATED);
+
+                        // 조아름 씨를 위한 토큰 확인
+                        System.out.println("token : " + token);
+
+                        // 응답 바디에 JSON 형태로 토큰 값을 포함
+                        Map<String, String> tokenResponse = new HashMap<>();
+                        tokenResponse.put("token", token);
+
+                        // ObjectMapper를 사용해 Map을 JSON 문자열로 변환
+                        String jsonResponse = objectMapper.writeValueAsString(tokenResponse);
+
+                        // 응답 바디에 JSON 문자열 작성
+                        response.getWriter().write(jsonResponse);
+
+                        return;
+                    } else {
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                        return;
+                    }
+
+                }
+
             }
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
