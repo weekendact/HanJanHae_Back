@@ -31,7 +31,6 @@ public class UsersController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-
     @PostMapping("/socialSignUp")
     public ResponseEntity<Void> socialSignUp(@RequestBody UsersSocialSaveDTO usersSocialSaveDTO, HttpServletRequest request) {
         usersSocialSaveDTO.setUsersSocialId((String) request.getAttribute("usersSocialId"));
