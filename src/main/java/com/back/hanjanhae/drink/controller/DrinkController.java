@@ -1,16 +1,22 @@
 package com.back.hanjanhae.drink.controller;
 
-import com.back.hanjanhae.drink.service.DrinkVERBService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.back.hanjanhae.drink.service.DrinkListFindService;
+import com.back.hanjanhae.dto.ResultDTO;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("drink")
 public class DrinkController {
 
-    private final DrinkVERBService drinkVERBService;
+    private final DrinkListFindService drinkListFindService;
 
-    public DrinkController(DrinkVERBService drinkVERBService) {
-        this.drinkVERBService = drinkVERBService;
+    public DrinkController(DrinkListFindService drinkListFindService) {
+        this.drinkListFindService = drinkListFindService;
+    }
+
+    @PostMapping("/cocktails/search")
+    public ResultDTO<?> cocktailList(@RequestParam String drinkTypeName) {
+        return new ResultDTO<>().makeResult(HttpStatus.OK, "리스트 조회", drinkListFindService.findCocktail(drinkTypeName), "result");
     }
 }
