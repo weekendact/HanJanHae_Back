@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
-    @Query("SELECT c FROM Cocktail c ORDER BY c.cocktailLikes DESC")
+    @Query(value = "SELECT * FROM cocktail ORDER BY cocktail_likes DESC LIMIT 5", nativeQuery = true)
     List<Cocktail> findTop5ByOrderByCocktailLikesDesc();
 }
