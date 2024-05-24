@@ -18,6 +18,7 @@ public class CommunityController {
     }
 
     @PostMapping("/top3")
-    public ResultDTO<?> getTop5CocktailsByLikes(){ return new ResultDTO<>().makeResult(HttpStatus.OK, "인기순 커뮤니티", communitySortByLikesService.getTop3CommunitiesByLikes(), "result"); }
+    public ResultDTO<?> getTop5CocktailsByLikes(){
+        return new ResultDTO<>().makeResult(HttpStatus.OK, "인기순 커뮤니티", communitySortByLikesService.getTop3CommunitiesByLikes(), "result"); }
 
 }
