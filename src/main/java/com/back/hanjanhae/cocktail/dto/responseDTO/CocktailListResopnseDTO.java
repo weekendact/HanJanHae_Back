@@ -1,4 +1,4 @@
-package com.back.hanjanhae.cocktail.dto;
+package com.back.hanjanhae.cocktail.dto.responseDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CocktailListDTO {
+public class CocktailListResopnseDTO {
     private String cocktailName;
     private String cocktailPicture;
 }
