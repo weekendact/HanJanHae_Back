@@ -26,7 +26,7 @@ public class CocktailSortByLikeService {
 
             cocktailInfoResponseDTO.setCocktailName(cocktail.getCocktailName());
             cocktailInfoResponseDTO.setCocktailLikes(cocktail.getCocktailLikes());
-            cocktailInfoResponseDTO.setCocktailPicture(cocktailInfoResponseDTO.getCocktailPicture());
+            cocktailInfoResponseDTO.setCocktailPicture(cocktail.getCocktailPicture());
 
             cocktailInfoResponseDTOList.add(cocktailInfoResponseDTO);
         }
