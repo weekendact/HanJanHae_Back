@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.back.hanjanhae.users.model.entity.Users;
+import com.back.hanjanhae.users.model.entity.UsersEntity;
 
 @Data
 @Entity
@@ -20,7 +20,7 @@ public class Community {
 
     @ManyToOne
     @JoinColumn(name = "users_id")
-    private Users usersId;
+    private UsersEntity usersEntityId;
 
     @Column(name = "community_name")
     private String communityName;
